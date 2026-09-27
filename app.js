@@ -3558,21 +3558,61 @@ function applyInitialStateFromUrl() {
 let lastMetricsHash = "";
 let lastIncidentsHash = "";
 
+const TURSO_PIPELINE = "https://dirichlet-ricriya.aws-ap-northeast-1.turso.io/v2/pipeline";
+const TURSO_RO_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTAyNDg0NTgsImlkIjoiMDFhMGQzMWYtODEwMS03NGQyLWJmNGQtNjZiNzZhNTBmMzhmIiwia2lkIjoiZ19GZi1OeUdDTTJBelpadnhkYjdwek9YSXpNa0FGOHMwQ2RPMmtUQWRoMCIsInJpZCI6Ijc2OWNhMjE3LTQ0NzEtNGYxNC05ODkzLTY0YzU5NWQyOGYxZCJ9.tm9gdKK_98qsayt28lDRiRYs6KkQfdOw7kYWqLWJ37aMrik4ez_yc_FXS_aWq7ezI2M6Fz4DGB1nvlXx5S22AA";
+
+async function fetchLiveTursoState() {
+  try {
+    const res = await fetch(TURSO_PIPELINE, {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + TURSO_RO_TOKEN,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        requests: [
+          { type: "execute", stmt: { sql: "SELECT current_state, active_features, dropped_features, latency_ns, traffic_rps, last_updated FROM system_state WHERE id = 1" } },
+          { type: "close" }
+        ]
+      })
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const row = data?.results?.[0]?.response?.result?.rows?.[0];
+    if (row && row.length >= 6) {
+      return {
+        state: row[0]?.value,
+        active_features: Number(row[1]?.value || 200),
+        dropped_features: Number(row[2]?.value || 0),
+        latency_ns: Number(row[3]?.value || 7.66),
+        traffic_rps: Number(row[4]?.value || 52400),
+        last_updated: row[5]?.value
+      };
+    }
+  } catch (_) {}
+  return null;
+}
+
 async function loadTelemetryData() {
   try {
-    const [statusRes, metricsRes, incRes] = await Promise.allSettled([
+    const [statusRes, metricsRes, incRes, tursoRes] = await Promise.allSettled([
       fetch("status.json?_=" + Date.now(), { cache: "no-store" }),
       fetch("data/metrics_timeseries.json?_=" + Date.now(), { cache: "no-store" }),
-      fetch("data/incidents.json?_=" + Date.now(), { cache: "no-store" })
+      fetch("data/incidents.json?_=" + Date.now(), { cache: "no-store" }),
+      fetchLiveTursoState()
     ]);
 
-    if (statusRes.status === "fulfilled" && statusRes.value.ok) {
-      const statusData = await statusRes.value.json();
-      if (statusData && statusData.state && ["nominal", "break", "recover"].includes(statusData.state)) {
-        if (statusData.state !== currentSystemState || !window.__initialTelemetryLoaded) {
-          window.__initialTelemetryLoaded = true;
-          setSystemState(statusData.state, statusData);
-        }
+    let statusData = null;
+    if (tursoRes.status === "fulfilled" && tursoRes.value) {
+      statusData = tursoRes.value;
+    } else if (statusRes.status === "fulfilled" && statusRes.value.ok) {
+      statusData = await statusRes.value.json();
+    }
+
+    if (statusData && statusData.state && ["nominal", "break", "recover"].includes(statusData.state)) {
+      if (statusData.state !== currentSystemState || !window.__initialTelemetryLoaded) {
+        window.__initialTelemetryLoaded = true;
+        setSystemState(statusData.state, statusData);
       }
     }
 
@@ -3636,5 +3676,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderAllCharts();
   applyInitialStateFromUrl();
   loadTelemetryData();
-  setInterval(loadTelemetryData, 5000);
+  setInterval(loadTelemetryData, 1000);
 });
