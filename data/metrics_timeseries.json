@@ -1,32 +1,5 @@
 [
   {
-    "id": 62,
-    "timestamp": "2026-09-24T11:28:07.171792+00:00",
-    "p99_latency_ns": 0.0,
-    "traffic_rps": 0,
-    "active_signals": 280,
-    "dropped_signals": 0,
-    "system_status": "major_outage"
-  },
-  {
-    "id": 63,
-    "timestamp": "2026-09-24T11:28:10.994314+00:00",
-    "p99_latency_ns": 7.66,
-    "traffic_rps": 53100,
-    "active_signals": 200,
-    "dropped_signals": 80,
-    "system_status": "degraded"
-  },
-  {
-    "id": 64,
-    "timestamp": "2026-09-24T11:28:52.862142+00:00",
-    "p99_latency_ns": 7.66,
-    "traffic_rps": 52400,
-    "active_signals": 200,
-    "dropped_signals": 0,
-    "system_status": "operational"
-  },
-  {
     "id": 65,
     "timestamp": "2026-09-24T11:30:29.823892+00:00",
     "p99_latency_ns": 7.66,
@@ -533,6 +506,33 @@
   {
     "id": 121,
     "timestamp": "2026-09-27T11:34:50.935283+00:00",
+    "p99_latency_ns": 7.66,
+    "traffic_rps": 53100,
+    "active_signals": 200,
+    "dropped_signals": 80,
+    "system_status": "operational"
+  },
+  {
+    "id": 122,
+    "timestamp": "2026-09-27T11:36:11.120416+00:00",
+    "p99_latency_ns": 0.0,
+    "traffic_rps": 0,
+    "active_signals": 280,
+    "dropped_signals": 0,
+    "system_status": "major_outage"
+  },
+  {
+    "id": 123,
+    "timestamp": "2026-09-27T11:36:21.705058+00:00",
+    "p99_latency_ns": 7.66,
+    "traffic_rps": 53100,
+    "active_signals": 200,
+    "dropped_signals": 80,
+    "system_status": "operational"
+  },
+  {
+    "id": 124,
+    "timestamp": "2026-09-27T11:36:25.566538+00:00",
     "p99_latency_ns": 7.66,
     "traffic_rps": 53100,
     "active_signals": 200,

@@ -8,8 +8,8 @@
     "status": "resolved",
     "impact": "100% 502 Bad Gateway across edge PoPs",
     "root_cause": "system.columns multi-shard reflection expanded dynamic catalog to 280 features",
-    "started_at": "2026-09-27T11:32:39.629026+00:00",
-    "resolved_at": "2026-09-27T11:34:49.037528+00:00",
+    "started_at": "2026-09-27T11:36:01.680419+00:00",
+    "resolved_at": "2026-09-27T11:36:23.439514+00:00",
     "updates": [
       {
         "time": "Just now",
@@ -20,46 +20,6 @@
         "time": "Just now",
         "status": "identified",
         "message": "Identified cross-boundary schema drift: system.columns multi-shard reflection expanded dynamic catalog to 280 features."
-      },
-      {
-        "time": "Just now",
-        "status": "resolved",
-        "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations."
-      },
-      {
-        "time": "Just now",
-        "status": "resolved",
-        "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations."
-      },
-      {
-        "time": "Just now",
-        "status": "resolved",
-        "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations."
-      },
-      {
-        "time": "Just now",
-        "status": "resolved",
-        "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations."
-      },
-      {
-        "time": "Just now",
-        "status": "resolved",
-        "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations."
-      },
-      {
-        "time": "Just now",
-        "status": "resolved",
-        "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations."
-      },
-      {
-        "time": "Just now",
-        "status": "resolved",
-        "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations."
-      },
-      {
-        "time": "Just now",
-        "status": "resolved",
-        "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations."
       },
       {
         "time": "Just now",
