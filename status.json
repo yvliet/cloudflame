@@ -1,4 +1,8 @@
 {
-  "state": "recover",
-  "timestamp": 1790508987.152406
+  "state": "nominal",
+  "active_features": 200,
+  "dropped_features": 0,
+  "latency_ns": 1.18,
+  "traffic_rps": 52400,
+  "last_updated": "2026-09-27T11:37:49.662303+00:00"
 }
