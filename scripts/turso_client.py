@@ -259,10 +259,35 @@ def resolve_outage_incident(
     execute_turso_queries([sql])
 
 
+def reset_to_pristine_nominal() -> None:
+    """Reset Turso database and local files back to 100% clean pristine operational baseline."""
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    queries = [
+        "DELETE FROM incidents WHERE id = 'inc-2026-09-24-drift';",
+        f"""
+        INSERT INTO system_state (id, current_state, active_features, dropped_features, latency_ns, traffic_rps, last_updated)
+        VALUES (1, 'nominal', 200, 0, 1.18, 52400, '{now_iso}')
+        ON CONFLICT(id) DO UPDATE SET
+            current_state = 'nominal',
+            active_features = 200,
+            dropped_features = 0,
+            latency_ns = 1.18,
+            traffic_rps = 52400,
+            last_updated = '{now_iso}';
+        """,
+        f"""
+        INSERT INTO metrics_timeseries (timestamp, p99_latency_ns, traffic_rps, active_signals, dropped_signals, system_status)
+        VALUES ('{now_iso}', 1.18, 52400, 200, 0, 'operational');
+        """
+    ]
+    execute_turso_queries(queries)
+    export_snapshots_to_disk()
+
+
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "nominal":
-        record_system_telemetry("nominal", 200, 0, 7.66, 52400)
+    if len(sys.argv) > 1 and sys.argv[1] in ("nominal", "reset", "clean"):
+        reset_to_pristine_nominal()
     elif len(sys.argv) > 1 and sys.argv[1] == "break":
         record_system_telemetry("break", 280, 280, 1420.0, 1820)
     elif len(sys.argv) > 1 and sys.argv[1] == "recover":

@@ -66,8 +66,8 @@ def update_web_status(state: str, **kwargs) -> None:
     # 1. Update Turso live database
     if turso_client:
         try:
-            if state == "nominal":
-                turso_client.record_system_telemetry("nominal", active_features=200, dropped_features=0, latency_ns=7.66, traffic_rps=52400)
+            if state in ("nominal", "reset", "clean"):
+                turso_client.reset_to_pristine_nominal()
             elif state == "break":
                 turso_client.record_outage_incident(
                     incident_id="inc-2026-09-24-drift",
