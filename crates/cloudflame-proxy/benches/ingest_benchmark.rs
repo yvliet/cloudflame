@@ -65,7 +65,7 @@ pub fn bench_ingestion(c: &mut Criterion) {
     group.bench_function("heap_allocated_vec_boundary_16", |b| {
         b.iter(|| {
             let mut heap_vec: Vec<FeatureDescriptor> = Vec::with_capacity(16);
-            heap_vec.extend_from_slice(&sample[192..208]);
+            heap_vec.extend_from_slice(&sample[184..200]);
             heap_vec.sort_by(|a, b| b.priority.cmp(&a.priority));
             heap_vec.truncate(8);
             black_box(heap_vec);
