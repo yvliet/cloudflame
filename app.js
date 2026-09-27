@@ -3,7 +3,7 @@
  */
 
 // Application State
-let currentSystemState = "nominal"; // 'nominal' | 'break' | 'recover'
+let currentSystemState = "break"; // 'nominal' | 'break' | 'recover'
 let activeTab = "overview";
 let activeTheme = "dark";
 let useUtc = false;
@@ -44,35 +44,23 @@ const DEFAULT_INCIDENTS = [
     "service": "svc-fl2",
     "service_group": "group-proxy",
     "severity": "critical",
-    "status": "resolved",
+    "status": "investigating",
     "impact": "100% 502 Bad Gateway across edge PoPs during dynamic configuration reload",
     "root_cause": "system.columns multi-shard reflection expanded dynamic catalog to 280 features, breaching stack buffer [Feature; 200]",
     "started_at": "2026-09-24T11:28:06.041Z",
-    "resolved_at": "2026-09-24T11:42:08.960Z",
+    "resolved_at": null,
     "updates": [
       {
-        "time": "2026-09-24T11:42:08.960Z",
-        "status": "resolved",
-        "title": "Resolved",
-        "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations. 100% edge traffic restored."
-      },
-      {
-        "time": "2026-09-24T11:35:12.000Z",
-        "status": "monitoring",
-        "title": "Monitoring",
-        "message": "Kernel memory and edge proxy daemon processes stabilized across canary PoPs. Edge latency returned to sub-1.2ms baseline."
-      },
-      {
-        "time": "2026-09-24T11:31:40.000Z",
-        "status": "identified",
-        "title": "Identified",
-        "message": "Identified cross-boundary schema drift: ClickHouse system.columns multi-shard reflection expanded dynamic catalog to 280 features, overflowing fixed stack buffer [Feature; 200]."
-      },
-      {
-        "time": "2026-09-24T11:28:06.041Z",
+        "time": "Just now",
         "status": "investigating",
         "title": "Investigating",
         "message": "Critical panic detected: L7 Edge Proxy Ingestion Panic (TryFromSliceError). Edge proxy non-responsive across all ingress points."
+      },
+      {
+        "time": "Just now",
+        "status": "identified",
+        "title": "Identified",
+        "message": "Identified cross-boundary schema drift: ClickHouse system.columns multi-shard reflection expanded dynamic catalog to 280 features, overflowing fixed stack buffer [Feature; 200]."
       }
     ]
   },
@@ -1726,7 +1714,7 @@ function generateUptimeBars(svc, incidentList = []) {
         incId = getIncidentForDay(svc, 90, incidentList);
       } else if (svc.status === "degraded") {
         tickClass = "degraded";
-        note = "Degraded feature intake · 80 shadow columns shed at edge";
+        note = "Degraded feature intake · Unqualified schema drift at edge";
         incId = getIncidentForDay(svc, 90, incidentList);
       }
     } else if (degradedDays.has(day)) {
@@ -2827,7 +2815,7 @@ function setSystemState(state, telemetry) {
     if (statDropped) statDropped.textContent = "< 0.001%";
     if (statDroppedMeta) {
       statDroppedMeta.className = "stat-meta text-emerald";
-      statDroppedMeta.textContent = "Zero degraded routes (80 Shed)";
+      statDroppedMeta.textContent = "Zero degraded routes (Schema Verified)";
     }
 
     if (activeSection) activeSection.style.display = "none";

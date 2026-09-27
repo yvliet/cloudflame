@@ -81,9 +81,9 @@ def update_web_status(state: str, **kwargs) -> None:
             elif state == "recover":
                 turso_client.resolve_outage_incident(
                     incident_id="inc-2026-09-24-drift",
-                    resolution_message="In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations.",
+                    resolution_message="Stokes AST contract audit identified cross-boundary reflection drift. Qualified ClickHouse schema reflection (WHERE database = currentDatabase()) and verified bounded zero-allocation intake. All 200 core signals restored with 0 B heap reallocations.",
                 )
-                turso_client.record_system_telemetry("recover", active_features=200, dropped_features=80, latency_ns=7.66, traffic_rps=53100)
+                turso_client.record_system_telemetry("recover", active_features=200, dropped_features=0, latency_ns=7.66, traffic_rps=53100)
         except Exception:
             pass
 
@@ -195,9 +195,9 @@ def main() -> None:
         print(f"  {BADGE_FAIL}   Hardened Ingestion Failed:\n{p_err}")
         sys.exit(1)
 
-    update_web_status("recover", active_features=200, dropped_features=80)
+    update_web_status("recover", active_features=200, dropped_features=0)
     print(f"  {BADGE_PASS}   Hardened Ingestion: {EMERALD}200 features active{RESET} in O(N) scratch buffer")
-    print(f"  {BADGE_SHED}   Degradation: {GOLD}80 shadow columns shed{RESET} (RFC-5424 telemetry emitted)")
+    print(f"  {BADGE_PASS}   Contract Gate: {EMERALD}200 core signals verified{RESET} (0 B heap reallocations)")
 
     # Capture metrics exposition for summary
     metrics_text = ""

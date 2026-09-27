@@ -32,7 +32,7 @@ INCIDENTS_SEED = [
                 "time": "2026-09-24T11:42:08.960Z",
                 "status": "resolved",
                 "title": "Resolved",
-                "message": "In-place partial selection (select_nth_unstable_by) shed 80 shadow columns. All 200 core signals restored with 0 B heap reallocations. 100% edge traffic restored."
+                "message": "Stokes AST contract audit identified cross-boundary reflection drift. Qualified ClickHouse schema reflection (WHERE database = currentDatabase()) and verified bounded zero-allocation intake. All 200 core signals restored with 0 B heap reallocations. 100% edge traffic restored."
             },
             {
                 "time": "2026-09-24T11:35:12.000Z",

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Overview | Cloudflame</title>
+  <title>Major Outage (502) | Cloudflame</title>
   <meta name="description" content="Real-time operational status for Cloudflame L7 Edge Security Proxy, Feature Extraction Pipeline, and Global Edge Infrastructure.">
   
   <!-- Favicon -->
@@ -102,12 +102,29 @@
       </div>
 
       <!-- Active Incidents Section -->
-      <section class="content-section" id="active-incidents-section" style="display: none;">
+      <section class="content-section" id="active-incidents-section" style="display: block;">
         <div class="section-heading-row">
           <h2 class="section-heading">Active incidents</h2>
         </div>
         <div class="incident-card-list" id="active-incidents-list">
-          <!-- Dynamically populated when Break or Recover is active -->
+          <div class="active-incident-card" onclick="openIncidentDetail('inc-2026-09-24-drift')" data-incident-id="inc-2026-09-24-drift" role="button" tabindex="0">
+            <div class="active-incident-main">
+              <div class="active-incident-title">
+                CRITICAL: L7 Edge Proxy Ingestion Panic (TryFromSliceError)
+              </div>
+              <span class="active-incident-tag">Core FL2 Proxy Engine</span>
+            </div>
+            <span class="active-incident-badge outage">Investigating</span>
+          </div>
+          <div class="active-incident-card" onclick="openIncidentDetail('inc-2026-09-18-shards')" data-incident-id="inc-2026-09-18-shards" role="button" tabindex="0">
+            <div class="active-incident-main">
+              <div class="active-incident-title">
+                Cross-Boundary Schema Reflection Cardinality Drift (280 Features)
+              </div>
+              <span class="active-incident-tag">ClickHouse system.columns</span>
+            </div>
+            <span class="active-incident-badge">Identified</span>
+          </div>
         </div>
       </section>
 
@@ -122,32 +139,32 @@
           <div class="stat-card">
             <div class="stat-label">Edge Processing Latency (p99)</div>
             <div class="stat-value-group">
-              <span class="stat-value" id="stat-latency">1.18</span>
+              <span class="stat-value" id="stat-latency">248.50</span>
               <span class="stat-unit">ms</span>
             </div>
-            <div class="stat-meta text-emerald" id="stat-latency-target">Optimal &lt; 15.0 ms target</div>
+            <div class="stat-meta text-rose" id="stat-latency-target">CRITICAL LATENCY SPIKE (502s)</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Global Edge Throughput</div>
             <div class="stat-value-group">
-              <span class="stat-value" id="stat-rps">52,400</span>
+              <span class="stat-value" id="stat-rps">1,820</span>
               <span class="stat-unit">req/s</span>
             </div>
-            <div class="stat-meta" id="stat-rps-meta">Global PoPs Nominal</div>
+            <div class="stat-meta text-rose" id="stat-rps-meta">96.5% Ingestion Failure (502s)</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">WAF &amp; Threat Engine Health</div>
             <div class="stat-value-group">
-              <span class="stat-value" id="stat-signals">100%</span>
+              <span class="stat-value" id="stat-signals">14.2%</span>
             </div>
-            <div class="stat-meta text-emerald" id="stat-signals-meta">All 200 Security Rules Active</div>
+            <div class="stat-meta text-rose" id="stat-signals-meta">Cardinality Drift Panic</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Edge Error Rate (5xx)</div>
             <div class="stat-value-group">
-              <span class="stat-value" id="stat-dropped">&lt; 0.001%</span>
+              <span class="stat-value" id="stat-dropped">96.5%</span>
             </div>
-            <div class="stat-meta" id="stat-dropped-meta">Zero degraded routes</div>
+            <div class="stat-meta text-rose" id="stat-dropped-meta">High Error Budget Burn</div>
           </div>
         </div>
 
