@@ -2809,10 +2809,10 @@ function setSystemState(state, telemetry) {
     setServiceStatus("svc-catalog", "degraded", "Degraded");
 
   } else if (state === "recover") {
-    if (statLat) statLat.textContent = "1.22";
+    if (statLat) statLat.textContent = "1.18";
     if (statLatTarget) {
       statLatTarget.className = "stat-meta text-emerald";
-      statLatTarget.textContent = "Optimal (1.22 ms < 15.0 ms target)";
+      statLatTarget.textContent = "Optimal (1.18 ms < 15.0 ms target)";
     }
     if (statRps) statRps.textContent = (telemetry && telemetry.traffic_rps) ? Number(telemetry.traffic_rps).toLocaleString() : "52,800";
     if (statRpsMeta) {
@@ -2830,23 +2830,11 @@ function setSystemState(state, telemetry) {
       statDroppedMeta.textContent = "Zero degraded routes (80 Shed)";
     }
 
-    if (activeSection) activeSection.style.display = "block";
-    if (activeList) {
-      activeList.innerHTML = `
-        <div class="active-incident-card" onclick="openIncidentDetail('inc-2026-09-24-drift')" data-incident-id="inc-2026-09-24-drift" role="button" tabindex="0">
-          <div class="active-incident-main">
-            <div class="active-incident-title">
-              RESOLVED: In-Place Partial Selection Shed 80 Shadow Columns (100% Uptime)
-            </div>
-            <span class="active-incident-tag">Zero-Alloc Ingestion Engine</span>
-          </div>
-          <span class="active-incident-badge resolved">Resolved</span>
-        </div>
-      `;
-    }
+    if (activeSection) activeSection.style.display = "none";
+    if (activeList) activeList.innerHTML = "";
 
-    if (mOper) mOper.textContent = "124";
-    if (mDegr) mDegr.textContent = "4";
+    if (mOper) mOper.textContent = "128";
+    if (mDegr) mDegr.textContent = "0";
     if (mOffl) mOffl.textContent = "0";
     if (mMain) mMain.textContent = "0";
 
@@ -2854,12 +2842,14 @@ function setSystemState(state, telemetry) {
     if (locReroute) locReroute.textContent = "0";
     if (locPartial) locPartial.textContent = "0";
 
-    setServiceStatus("svc-fl2", "degraded", "Operational (80 Shed)");
+    setServiceStatus("svc-fl2", "operational", "Operational (Dual-Zone)");
     setServiceStatus("svc-catalog", "operational", "Operational");
   }
 
   renderServices();
   renderLocations();
+  renderOverview();
+  renderHistory();
   if (leafletMap) {
     updateMapMarkers();
   }
@@ -3572,23 +3562,43 @@ async function fetchLiveTursoState() {
       body: JSON.stringify({
         requests: [
           { type: "execute", stmt: { sql: "SELECT current_state, active_features, dropped_features, latency_ns, traffic_rps, last_updated FROM system_state WHERE id = 1" } },
+          { type: "execute", stmt: { sql: "SELECT id, title, service, service_group, severity, status, impact, root_cause, started_at, resolved_at, updates_json FROM incidents ORDER BY started_at DESC LIMIT 30" } },
           { type: "close" }
         ]
       })
     });
     if (!res.ok) return null;
     const data = await res.json();
-    const row = data?.results?.[0]?.response?.result?.rows?.[0];
-    if (row && row.length >= 6) {
-      return {
-        state: row[0]?.value,
-        active_features: Number(row[1]?.value || 200),
-        dropped_features: Number(row[2]?.value || 0),
-        latency_ns: Number(row[3]?.value || 7.66),
-        traffic_rps: Number(row[4]?.value || 52400),
-        last_updated: row[5]?.value
+    let system = null;
+    const stateRow = data?.results?.[0]?.response?.result?.rows?.[0];
+    if (stateRow && stateRow.length >= 6) {
+      system = {
+        state: stateRow[0]?.value,
+        active_features: Number(stateRow[1]?.value || 200),
+        dropped_features: Number(stateRow[2]?.value || 0),
+        latency_ns: Number(stateRow[3]?.value || 7.66),
+        traffic_rps: Number(stateRow[4]?.value || 52400),
+        last_updated: stateRow[5]?.value
       };
     }
+
+    let incidents = null;
+    const incResult = data?.results?.[1]?.response?.result;
+    if (incResult && Array.isArray(incResult.rows)) {
+      const cols = incResult.cols.map(c => c.name);
+      incidents = incResult.rows.map(r => {
+        const item = {};
+        cols.forEach((col, idx) => {
+          item[col] = r[idx]?.value;
+        });
+        if (item.updates_json) {
+          try { item.updates = JSON.parse(item.updates_json); } catch (_) { item.updates = []; }
+        }
+        return item;
+      });
+    }
+
+    return { system, incidents };
   } catch (_) {}
   return null;
 }
@@ -3603,8 +3613,8 @@ async function loadTelemetryData() {
     ]);
 
     let statusData = null;
-    if (tursoRes.status === "fulfilled" && tursoRes.value) {
-      statusData = tursoRes.value;
+    if (tursoRes.status === "fulfilled" && tursoRes.value && tursoRes.value.system) {
+      statusData = tursoRes.value.system;
     } else if (statusRes.status === "fulfilled" && statusRes.value.ok) {
       statusData = await statusRes.value.json();
     }
@@ -3628,19 +3638,23 @@ async function loadTelemetryData() {
       }
     }
 
-    if (incRes.status === "fulfilled" && incRes.value.ok) {
-      const remoteIncidents = await incRes.value.json();
-      if (Array.isArray(remoteIncidents) && remoteIncidents.length > 0) {
-        const hash = JSON.stringify(remoteIncidents);
-        if (hash !== lastIncidentsHash) {
-          lastIncidentsHash = hash;
-          incidentsData = remoteIncidents;
-          renderOverview();
-          renderHistory();
-          if (currentOpenIncidentId && document.getElementById("view-incident-detail")?.style.display !== "none") {
-            const currentInc = findIncidentById(currentOpenIncidentId);
-            if (currentInc) showIncidentDetail(currentInc);
-          }
+    let remoteIncidents = null;
+    if (tursoRes.status === "fulfilled" && tursoRes.value && Array.isArray(tursoRes.value.incidents) && tursoRes.value.incidents.length > 0) {
+      remoteIncidents = tursoRes.value.incidents;
+    } else if (incRes.status === "fulfilled" && incRes.value.ok) {
+      remoteIncidents = await incRes.value.json();
+    }
+
+    if (Array.isArray(remoteIncidents) && remoteIncidents.length > 0) {
+      const hash = JSON.stringify(remoteIncidents);
+      if (hash !== lastIncidentsHash) {
+        lastIncidentsHash = hash;
+        incidentsData = remoteIncidents;
+        renderOverview();
+        renderHistory();
+        if (currentOpenIncidentId && document.getElementById("view-incident-detail")?.style.display !== "none") {
+          const currentInc = findIncidentById(currentOpenIncidentId);
+          if (currentInc) showIncidentDetail(currentInc);
         }
       }
     }

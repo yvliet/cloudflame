@@ -184,7 +184,7 @@ def record_system_telemetry(
 ) -> None:
     """Record a telemetry reading in Turso system_state and metrics_timeseries."""
     now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    system_status = "operational" if state == "nominal" else "major_outage" if state == "break" else "degraded"
+    system_status = "operational" if state in ("nominal", "recover") else "major_outage" if state == "break" else "degraded"
 
     queries = [
         f"""
@@ -229,6 +229,7 @@ def record_outage_incident(
     VALUES ('{incident_id}', '{title.replace("'", "''")}', '{service}', '{service_group}', 'critical', 'investigating', '{impact.replace("'", "''")}', '{root_cause.replace("'", "''")}', '{now_iso}', NULL, '{updates_json}');
     """
     execute_turso_queries([sql])
+    export_snapshots_to_disk()
 
 
 def resolve_outage_incident(
@@ -257,6 +258,7 @@ def resolve_outage_incident(
     WHERE id = '{incident_id}';
     """
     execute_turso_queries([sql])
+    export_snapshots_to_disk()
 
 
 def reset_to_pristine_nominal() -> None:

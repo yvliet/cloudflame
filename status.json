@@ -1,8 +1,4 @@
-﻿{
-    "traffic_rps":  52400,
-    "last_updated":  "2026-09-27T06:46:36.891524+00:00",
-    "active_features":  200,
-    "dropped_features":  0,
-    "state":  "nominal",
-    "latency_ns":  1.18
+{
+  "state": "recover",
+  "timestamp": 1790508892.2391856
 }
