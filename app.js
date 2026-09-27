@@ -10,11 +10,11 @@ let useUtc = false;
 
 // Restore saved preferences from localStorage
 try {
-  const savedTheme = localStorage.getItem("dirichlet_theme");
+  const savedTheme = localStorage.getItem("cloudflame_theme") || localStorage.getItem("dirichlet_theme");
   if (savedTheme === "light" || savedTheme === "dark") {
     activeTheme = savedTheme;
   }
-  const savedTz = localStorage.getItem("dirichlet_timezone");
+  const savedTz = localStorage.getItem("cloudflame_timezone") || localStorage.getItem("dirichlet_timezone");
   if (savedTz === "utc") {
     useUtc = true;
   } else if (savedTz === "local") {
@@ -1037,7 +1037,8 @@ const ACTIVE_MAINTENANCE = [
     id: "maint-zrh-2026-09-24",
     title: "ZRH (Zurich) on 2026-09-24",
     status: "In Progress",
-    date: "24 Sept 2026, 7.00",
+    started_at: "2026-09-24T07:00:00Z",
+    date: "2026-09-24T07:00:00Z",
     type: "maintenance",
     location: "ZRH"
   },
@@ -1045,7 +1046,8 @@ const ACTIVE_MAINTENANCE = [
     id: "maint-waw-2026-09-23",
     title: "WAW (Warsaw) on 2026-09-23",
     status: "In Progress",
-    date: "24 Sept 2026, 6.00",
+    started_at: "2026-09-24T06:00:00Z",
+    date: "2026-09-24T06:00:00Z",
     type: "maintenance",
     location: "WAW"
   }
@@ -1173,7 +1175,8 @@ const HISTORY_RECORDS = [
     title: "ZRH (Zurich) on 2026-09-24",
     type: "maintenance",
     status: "In Progress",
-    date: "24 Sept 2026, 7.00",
+    started_at: "2026-09-24T07:00:00Z",
+    date: "2026-09-24T07:00:00Z",
     service: "fl2",
     location: "ZRH",
     dotClass: "blue",
@@ -1184,7 +1187,8 @@ const HISTORY_RECORDS = [
     title: "DAC (Dhaka) on 2026-09-23",
     type: "maintenance",
     status: "Completed",
-    date: "24 Sept 2026, 6.01",
+    started_at: "2026-09-24T06:01:00Z",
+    date: "2026-09-24T06:01:00Z",
     service: "fl2",
     location: "DAC",
     dotClass: "blue",
@@ -1195,7 +1199,8 @@ const HISTORY_RECORDS = [
     title: "WAW (Warsaw) on 2026-09-23",
     type: "maintenance",
     status: "In Progress",
-    date: "24 Sept 2026, 6.00",
+    started_at: "2026-09-24T06:00:00Z",
+    date: "2026-09-24T06:00:00Z",
     service: "fl2",
     location: "WAW",
     dotClass: "blue",
@@ -1206,7 +1211,8 @@ const HISTORY_RECORDS = [
     title: "HNL (Honolulu) on 2026-09-23",
     type: "maintenance",
     status: "Completed",
-    date: "24 Sept 2026, 5.00",
+    started_at: "2026-09-24T05:00:00Z",
+    date: "2026-09-24T05:00:00Z",
     service: "fl2",
     location: "HNL",
     dotClass: "blue",
@@ -1218,7 +1224,8 @@ const HISTORY_RECORDS = [
     type: "incident",
     impact: "Minor",
     status: "Resolved",
-    date: "24 Sept 2026, 3.59",
+    started_at: "2026-09-24T03:59:00Z",
+    date: "2026-09-24T03:59:00Z",
     service: "api",
     location: "all",
     dotClass: "amber",
@@ -1229,7 +1236,8 @@ const HISTORY_RECORDS = [
     title: "PER (Perth) on 2026-09-23",
     type: "maintenance",
     status: "Completed",
-    date: "24 Sept 2026, 3.00",
+    started_at: "2026-09-24T03:00:00Z",
+    date: "2026-09-24T03:00:00Z",
     service: "fl2",
     location: "PER",
     dotClass: "blue",
@@ -1240,7 +1248,8 @@ const HISTORY_RECORDS = [
     title: "BNE (Brisbane) on 2026-09-23",
     type: "maintenance",
     status: "Completed",
-    date: "24 Sept 2026, 2.00",
+    started_at: "2026-09-24T02:00:00Z",
+    date: "2026-09-24T02:00:00Z",
     service: "fl2",
     location: "BNE",
     dotClass: "blue",
@@ -1252,7 +1261,8 @@ const HISTORY_RECORDS = [
     type: "incident",
     impact: "Minor",
     status: "Identified",
-    date: "24 Sept 2026, 1.44",
+    started_at: "2026-09-24T01:44:00Z",
+    date: "2026-09-24T01:44:00Z",
     service: "fl2",
     location: "all",
     dotClass: "amber",
@@ -1336,6 +1346,7 @@ function switchTab(tabId, updateUrl = true) {
 function toggleTimezone() {
   useUtc = !useUtc;
   try {
+    localStorage.setItem("cloudflame_timezone", useUtc ? "utc" : "local");
     localStorage.setItem("dirichlet_timezone", useUtc ? "utc" : "local");
   } catch (e) {}
 
@@ -1348,6 +1359,7 @@ function toggleTimezone() {
   }
   renderOverview();
   renderHistory();
+  renderAllCharts();
 }
 
 function cycleTheme() {
@@ -1378,18 +1390,7 @@ function cycleTheme() {
 // 3.1 Overview Tab
 function formatIncidentDate(isoString) {
   if (!isoString) return "";
-  try {
-    const d = new Date(isoString);
-    const day = d.getDate();
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const month = months[d.getMonth()];
-    const year = d.getFullYear();
-    const hours = d.getHours();
-    const mins = String(d.getMinutes()).padStart(2, "0");
-    return `${day} ${month} ${year}, ${hours}.${mins}`;
-  } catch (_) {
-    return isoString;
-  }
+  return formatTimestampForTimezone(isoString);
 }
 
 function getEffectiveIncidents() {
@@ -1406,7 +1407,12 @@ function getEffectiveIncidents() {
       statusClass: inc.status === "resolved" ? "status-text-resolved" : inc.status === "investigating" ? "status-text-identified" : "status-text-progress"
     }));
   }
-  return RECENT_INCIDENTS;
+  return RECENT_INCIDENTS.map(inc => ({
+    ...inc,
+    date: formatIncidentDate(inc.date || inc.started_at),
+    dotClass: inc.status === "Resolved" ? "amber" : "rose",
+    statusClass: inc.status === "Resolved" ? "status-text-resolved" : "status-text-progress"
+  }));
 }
 
 function renderOverview() {
@@ -1440,7 +1446,7 @@ function renderOverview() {
         </div>
         <div class="row-right">
           <span class="status-text-progress">${maint.status}</span>
-          <span class="row-date">${maint.date}</span>
+          <span class="row-date">${formatIncidentDate(maint.started_at || maint.date)}</span>
         </div>
       </div>
     `).join("");
@@ -1877,22 +1883,27 @@ function filterLocations(shouldPanMap = false) {
 
 // 3.4 History Tab
 function getEffectiveHistoryRecords() {
-  if (incidentsData && incidentsData.length > 0) {
-    const dynamicItems = incidentsData.map((inc, i) => ({
-      id: inc.id || `inc-dyn-${i}`,
-      title: inc.title,
-      type: "incident",
-      impact: inc.severity === "critical" ? "Critical" : inc.severity === "major" ? "Major" : "Minor",
-      status: inc.status === "resolved" ? "Resolved" : inc.status === "investigating" ? "Investigating" : "Identified",
-      date: formatIncidentDate(inc.started_at),
-      service: inc.service || "fl2",
-      location: "all",
-      dotClass: inc.status === "resolved" ? "amber" : "rose",
-      statusClass: inc.status === "resolved" ? "status-text-resolved" : inc.status === "investigating" ? "status-text-identified" : "status-text-progress"
-    }));
-    return [...dynamicItems, ...HISTORY_RECORDS];
-  }
-  return HISTORY_RECORDS;
+  const dynamicItems = (incidentsData && incidentsData.length > 0)
+    ? incidentsData.map((inc, i) => ({
+        id: inc.id || `inc-dyn-${i}`,
+        title: inc.title,
+        type: "incident",
+        impact: inc.severity === "critical" ? "Critical" : inc.severity === "major" ? "Major" : "Minor",
+        status: inc.status === "resolved" ? "Resolved" : inc.status === "investigating" ? "Investigating" : "Identified",
+        date: formatIncidentDate(inc.started_at),
+        service: inc.service || "fl2",
+        location: "all",
+        dotClass: inc.status === "resolved" ? "amber" : "rose",
+        statusClass: inc.status === "resolved" ? "status-text-resolved" : inc.status === "investigating" ? "status-text-identified" : "status-text-progress"
+      }))
+    : [];
+
+  const staticItems = HISTORY_RECORDS.map(rec => ({
+    ...rec,
+    date: formatIncidentDate(rec.started_at || rec.date)
+  }));
+
+  return [...dynamicItems, ...staticItems];
 }
 
 function renderHistory() {
@@ -1976,12 +1987,12 @@ function formatTimestampForTimezone(isoString) {
       const year = d.getUTCFullYear();
       const hours = String(d.getUTCHours()).padStart(2, "0");
       const mins = String(d.getUTCMinutes()).padStart(2, "0");
-      return `${day} ${month} ${year}, ${hours}.${mins} UTC`;
+      return `${day} ${month} ${year}, ${hours}:${mins} UTC`;
     } else {
       const day = d.getDate();
       const month = months[d.getMonth()];
       const year = d.getFullYear();
-      const hours = d.getHours();
+      const hours = String(d.getHours()).padStart(2, "0");
       const mins = String(d.getMinutes()).padStart(2, "0");
 
       let tzSuffix = "";
@@ -1991,7 +2002,7 @@ function formatTimestampForTimezone(isoString) {
         if (tz && tz.value) tzSuffix = " " + tz.value;
       } catch (_) {}
 
-      return `${day} ${month} ${year}, ${hours}.${mins}${tzSuffix}`;
+      return `${day} ${month} ${year}, ${hours}:${mins}${tzSuffix}`;
     }
   } catch (_) {
     return isoString;
@@ -2417,10 +2428,20 @@ function formatChartTime(ts, full = false) {
   if (!ts) return "";
   try {
     const d = new Date(ts);
+    if (isNaN(d.getTime())) return "";
+    const options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    };
     if (full) {
-      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) + (useUtc ? " UTC" : "");
+      options.second = "2-digit";
     }
-    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    if (useUtc) {
+      options.timeZone = "UTC";
+      return d.toLocaleTimeString("en-US", options) + " UTC";
+    }
+    return d.toLocaleTimeString("en-US", options);
   } catch (_) {
     return "";
   }
