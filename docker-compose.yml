@@ -1,12 +1,12 @@
 # ==============================================================================
-# Dirichlet Analytical Layer: ClickHouse Cluster Services
+# Cloudflame Analytical Layer: ClickHouse Cluster Services (formerly dirichlet)
 # Service: ClickHouse single-node cluster modeling distributed shard reflections
 # ==============================================================================
 
 services:
   clickhouse:
     image: clickhouse/clickhouse-server:24.3-alpine
-    container_name: dirichlet-clickhouse
+    container_name: dirichlet-clickhouse # (formerly dirichlet; ClickHouse database service)
     ports:
       - "8123:8123" # HTTP Query API
       - "9000:9000" # Native TCP client

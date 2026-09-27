@@ -1,4 +1,4 @@
-//! Dirichlet Edge Security: Hardened Feature Ingestion Engine
+//! Cloudflame Edge Security: Hardened Feature Ingestion Engine
 //!
 //! Provides zero-allocation priority degradation for dynamic configuration payloads.
 
@@ -125,7 +125,7 @@ pub fn ingest_features_gracefully(features: &mut Vec<Feature>) -> IngestionRepor
 
     // Format structured RFC-5424 syslog warning
     let rfc5424_msg = format!(
-        "<132>1 2026-09-23T16:18:00.000Z edge-colo-01 dirichlet-proxy 4102 SEC_OVERFLOW [feature_overflow@dirichlet dropped=\"{}\" limit=\"{}\" total=\"{}\"] High-cardinality feature payload degraded: low-priority features shed",
+        "<132>1 2026-09-23T16:18:00.000Z edge-colo-01 cloudflame-proxy 4102 SEC_OVERFLOW [feature_overflow@cloudflame dropped=\"{}\" limit=\"{}\" total=\"{}\"] High-cardinality feature payload degraded: low-priority features shed",
         dropped_count, MAX_ACTIVE_FEATURES, initial_count
     );
 

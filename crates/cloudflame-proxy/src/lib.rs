@@ -1,4 +1,4 @@
-//! Dirichlet Edge Security Service
+//! Cloudflame Edge Security Service
 //!
 
 pub mod config;

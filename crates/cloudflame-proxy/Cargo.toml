@@ -1,9 +1,9 @@
 [package]
-name = "dirichlet-proxy"
+name = "cloudflame-proxy"
 version = "0.1.0"
 edition = "2021"
 authors = ["yvliet <yvliet@users.noreply.github.com>"]
-description = "Dirichlet edge security proxy feature ingestion service"
+description = "Cloudflame edge security proxy feature ingestion service"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }

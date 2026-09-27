@@ -1,5 +1,5 @@
 """
-Dirichlet Feature Pipeline: Configuration Management.
+Cloudflame Feature Pipeline: Configuration Management.
 
 """
 

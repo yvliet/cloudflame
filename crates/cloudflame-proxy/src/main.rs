@@ -1,4 +1,4 @@
-//! Dirichlet Edge Security Service Executable
+//! Cloudflame Edge Security Service Executable
 //!
 
 use std::env;
@@ -6,7 +6,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::process;
 
-use dirichlet_proxy::{
+use cloudflame_proxy::{
     ingest_features_baseline, ingest_features_gracefully, Feature, MAX_ACTIVE_FEATURES,
 };
 
@@ -50,7 +50,7 @@ fn main() {
         Ok(bytes) => bytes,
         Err(err) => {
             eprintln!(
-                "[dirichlet-proxy] Failed reading payload at {}: {}",
+                "[cloudflame-proxy] Failed reading payload at {}: {}",
                 payload_path.display(),
                 err
             );
@@ -61,20 +61,20 @@ fn main() {
     let mut features: Vec<Feature> = match serde_json::from_slice(&payload_bytes) {
         Ok(feats) => feats,
         Err(err) => {
-            eprintln!("[dirichlet-proxy] Failed parsing features.json: {}", err);
+            eprintln!("[cloudflame-proxy] Failed parsing features.json: {}", err);
             process::exit(1);
         }
     };
 
     println!(
-        "[dirichlet-proxy] Ingesting dynamic feature configuration (received {} features)",
+        "[cloudflame-proxy] Ingesting dynamic feature configuration (received {} features)",
         features.len()
     );
 
     let show_metrics = args.iter().any(|arg| arg == "--metrics");
 
     if use_hardened {
-        println!("[dirichlet-proxy] Mode: HARDENED (in-place partial selection)");
+        println!("[cloudflame-proxy] Mode: HARDENED (in-place partial selection)");
         let report = ingest_features_gracefully(&mut features);
 
         if let Some(log_msg) = &report.rfc5424_log {
@@ -82,26 +82,26 @@ fn main() {
         }
 
         println!(
-            "[dirichlet-proxy] Ingestion completed: active_count={} dropped_count={} degraded={}",
+            "[cloudflame-proxy] Ingestion completed: active_count={} dropped_count={} degraded={}",
             report.active_count, report.dropped_count, report.degraded
         );
 
         if show_metrics {
-            let metrics = dirichlet_proxy::PrometheusMetrics::from_ingestion(&report);
+            let metrics = cloudflame_proxy::PrometheusMetrics::from_ingestion(&report);
             println!("\n# --- Prometheus Exposition Output ---");
             print!("{}", metrics.render_prometheus_text());
         }
     } else {
-        println!("[dirichlet-proxy] Mode: BASELINE (fixed array conversion)");
+        println!("[cloudflame-proxy] Mode: BASELINE (fixed array conversion)");
         let active_array = ingest_features_baseline(&features);
         let populated_count = active_array.iter().filter(|f| !f.name.is_empty()).count();
         println!(
-            "[dirichlet-proxy] Ingestion completed: array_capacity={} populated={}",
+            "[cloudflame-proxy] Ingestion completed: array_capacity={} populated={}",
             MAX_ACTIVE_FEATURES, populated_count
         );
 
         if show_metrics {
-            let metrics = dirichlet_proxy::PrometheusMetrics {
+            let metrics = cloudflame_proxy::PrometheusMetrics {
                 features_total: features.len(),
                 features_active: populated_count,
                 features_degraded_total: 0,
@@ -112,8 +112,8 @@ fn main() {
     }
 
     if args.iter().any(|arg| arg == "--eval" || arg == "--evaluate") {
-        let evaluator = dirichlet_proxy::TrafficEvaluator::new(dirichlet_proxy::config::EvaluatorConfig::default());
-        let sample_signals = dirichlet_proxy::RequestSignals {
+        let evaluator = cloudflame_proxy::TrafficEvaluator::new(cloudflame_proxy::config::EvaluatorConfig::default());
+        let sample_signals = cloudflame_proxy::RequestSignals {
             ja4_digest: "t13d150500_8daaf6152771_b4b5de4f58f4".to_string(),
             asn: 13335,
             is_datacenter_or_proxy: false,
@@ -123,7 +123,7 @@ fn main() {
         };
         let verdict = evaluator.evaluate(&sample_signals);
         println!(
-            "[dirichlet-proxy] Sample Request Evaluator Verdict: threat_score={} action={:?}",
+            "[cloudflame-proxy] Sample Request Evaluator Verdict: threat_score={} action={:?}",
             verdict.threat_score, verdict.action
         );
     }

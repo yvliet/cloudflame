@@ -1,6 +1,6 @@
 //! Synthesized Conformance Verification Suite
 //!
-//! Validates contract invariants for dirichlet-proxy under high-cardinality payloads:
+//! Validates contract invariants for cloudflame-proxy under high-cardinality payloads:
 //! - Property 1: Unbounded Cardinality Boundary Preservation (0..2,500 features)
 //! - Property 2: Deterministic Priority Monotonicity
 //! - Property 3: Core Signal Immunity Preservation
@@ -9,7 +9,7 @@
 //! - Massive Stress Gate: 100,000-Feature Ingestion Stability Assertion
 //!
 
-use dirichlet_proxy::{ingest_features_gracefully, Feature, MAX_ACTIVE_FEATURES};
+use cloudflame_proxy::{ingest_features_gracefully, Feature, MAX_ACTIVE_FEATURES};
 use proptest::collection::vec;
 use proptest::prelude::*;
 use std::collections::HashSet;
@@ -213,7 +213,7 @@ fn test_baseline_panics_on_oversized_payload() {
             i >= 200,
         ));
     }
-    dirichlet_proxy::ingest_features_baseline(&oversized);
+    cloudflame_proxy::ingest_features_baseline(&oversized);
 }
 
 /// Massive Stress Ingestion Gate:

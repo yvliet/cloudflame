@@ -1,4 +1,4 @@
-//! Dirichlet Edge Traffic Evaluator
+//! Cloudflame Edge Traffic Evaluator
 //!
 //! Multi-vector bot detection scoring engine computing unified threat scores (0..100)
 //! across JA4 cryptographic fingerprints, IP/BGP reputation, and behavioral entropy.

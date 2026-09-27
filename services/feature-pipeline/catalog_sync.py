@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Dirichlet Feature Pipeline: Catalog Metadata Synchronization Service.
+Cloudflame Feature Pipeline: Catalog Metadata Synchronization Service.
 Simulates ClickHouse system.columns metadata extraction across cluster shards.
 
 """
@@ -437,7 +437,7 @@ def sync_catalog(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Dirichlet ClickHouse Catalog Metadata Sync")
+    parser = argparse.ArgumentParser(description="Cloudflame ClickHouse Catalog Metadata Sync")
     parser.add_argument(
         "--simulate-duplication",
         action="store_true",

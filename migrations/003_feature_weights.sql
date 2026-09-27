@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Migration: 003_feature_weights.sql
--- Service: Dirichlet Edge Security Machine Learning Evaluation
+-- Service: Cloudflame Edge Security Machine Learning Evaluation
 -- Description: Machine learning feature weight table defining model scoring
 --              multipliers, anomaly thresholds, and priority classifications.
 -- ============================================================================

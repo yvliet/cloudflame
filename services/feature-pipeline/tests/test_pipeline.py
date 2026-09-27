@@ -1,5 +1,5 @@
 """
-Dirichlet Feature Pipeline: Unit Test Suite.
+Cloudflame Feature Pipeline: Unit Test Suite.
 
 Validates catalog synchronization, schema reflection invariants, and feature extraction.
 """

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Dirichlet Conformance Testbed & Verification Suite.
+Cloudflame Conformance Testbed & Verification Suite.
 Validates cross-boundary contract drift against Cloudflare Nov 18, 2025 outage cascade.
 Executes 10,000-case property fuzzing, 100,000-feature stress ingestion, and benchmarks.
 """
@@ -45,7 +45,7 @@ SYM_DOT = "\u00b7"           # Middle dot (·)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 EXTRACTOR = REPO_ROOT / "services" / "feature-pipeline" / "extractor.py"
-PROXY_CRATE_DIR = REPO_ROOT / "crates" / "dirichlet-proxy"
+PROXY_CRATE_DIR = REPO_ROOT / "crates" / "cloudflame-proxy"
 WEB_STATUS_FILES = [
     REPO_ROOT / "status.json",
     PROXY_CRATE_DIR / "web" / "status.json",
@@ -129,9 +129,9 @@ def extract_panic_location(stderr: str) -> str:
                 line_no = match.group(2)
                 col_no = match.group(3)
                 if not file_rel.startswith("crates/"):
-                    file_rel = f"crates/dirichlet-proxy/{file_rel}"
+                    file_rel = f"crates/cloudflame-proxy/{file_rel}"
                 return f"{file_rel}:{line_no}:{col_no}"
-    return "crates/dirichlet-proxy/src/lib.rs:33:67"
+    return "crates/cloudflame-proxy/src/lib.rs:33:67"
 
 
 def compute_contract_hash() -> str:
@@ -144,7 +144,7 @@ def compute_contract_hash() -> str:
 
 
 def main() -> None:
-    print(f"\n  {CYAN}{BOLD}dirichlet{RESET} {GRAY}:{RESET} {WHITE}dirichlet-proxy verification suite{RESET}")
+    print(f"\n  {CYAN}{BOLD}cloudflame{RESET} {GRAY}:{RESET} {WHITE}cloudflame-proxy verification suite{RESET}")
 
     contract_hash = compute_contract_hash()
 
@@ -158,7 +158,7 @@ def main() -> None:
         print(f"  {BADGE_FAIL}   Catalog Sync Failed:\n{err}")
         sys.exit(1)
 
-    rc, out, err = run_cmd(["cargo", "run", "-q", "--bin", "dirichlet-proxy"], cwd=PROXY_CRATE_DIR)
+    rc, out, err = run_cmd(["cargo", "run", "-q", "--bin", "cloudflame-proxy"], cwd=PROXY_CRATE_DIR)
     if rc != 0:
         print(f"  {BADGE_FAIL}   Baseline Proxy Failed on Clean Payload:\n{err}")
         sys.exit(1)
@@ -175,7 +175,7 @@ def main() -> None:
     # -------------------------------------------------------------------------
     # 3. Baseline Failure Mode Reproduction (Slice Panic)
     # -------------------------------------------------------------------------
-    rc, p_out, p_err = run_cmd(["cargo", "run", "-q", "--bin", "dirichlet-proxy"], cwd=PROXY_CRATE_DIR)
+    rc, p_out, p_err = run_cmd(["cargo", "run", "-q", "--bin", "cloudflame-proxy"], cwd=PROXY_CRATE_DIR)
     if rc != 0 and "TryFromSliceError" in p_err and "unwrap" in p_err:
         panic_loc = extract_panic_location(p_err)
         update_web_status("break", active_features=280, error="TryFromSliceError", panic_loc=panic_loc)
@@ -188,7 +188,7 @@ def main() -> None:
     # 4. Infallible Hardened Ingestion Execution (Zero-Allocation Recovery)
     # -------------------------------------------------------------------------
     rc, p_out, p_err = run_cmd(
-        ["cargo", "run", "-q", "--bin", "dirichlet-proxy", "--", "--hardened", "--metrics"],
+        ["cargo", "run", "-q", "--bin", "cloudflame-proxy", "--", "--hardened", "--metrics"],
         cwd=PROXY_CRATE_DIR,
     )
     if rc != 0:
@@ -202,7 +202,7 @@ def main() -> None:
     # Capture metrics exposition for summary
     metrics_text = ""
     for line in p_out.splitlines():
-        if "dirichlet_active_features" in line or "dirichlet_dropped_features_total" in line:
+        if "cloudflame_active_features" in line or "cloudflame_dropped_features_total" in line:
             metrics_text += line + "\n"
 
     # -------------------------------------------------------------------------

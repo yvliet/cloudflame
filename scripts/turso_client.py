@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Dirichlet Turso Telemetry Client & Snapshot Exporter.
+Cloudflame Turso Telemetry Client & Snapshot Exporter.
 Safely connects to Turso libSQL HTTP API using local environment credentials,
 records state/metrics/incidents, and exports static JSON snapshots for GitHub Pages.
 """

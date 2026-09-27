@@ -1,4 +1,4 @@
-//! Dirichlet Edge Proxy Configuration Loader
+//! Cloudflame Edge Proxy Configuration Loader
 //!
 
 use serde::{Deserialize, Serialize};
@@ -71,7 +71,7 @@ pub struct TelemetryConfig {
 impl Default for TelemetryConfig {
     fn default() -> Self {
         Self {
-            rfc5424_app_name: "dirichlet-proxy".to_string(),
+            rfc5424_app_name: "cloudflame-proxy".to_string(),
             rfc5424_facility: 16,
             prometheus_metrics_enabled: true,
             prometheus_endpoint: "/metrics".to_string(),
@@ -128,7 +128,7 @@ evaluator:
   network_reputation_weight: 0.4
   behavioral_entropy_weight: 0.2
 telemetry:
-  rfc5424_app_name: "dirichlet-test"
+  rfc5424_app_name: "cloudflame-test"
   rfc5424_facility: 16
   prometheus_metrics_enabled: true
   prometheus_endpoint: "/metrics"

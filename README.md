@@ -1,6 +1,6 @@
-# Dirichlet Edge Security Service
+# Cloudflame Edge Security Service
 
-Dirichlet is a high-throughput edge bot mitigation and traffic classification proxy written in Rust, paired with an analytical feature extraction pipeline. It models an authentic 200-feature security telemetry catalog and implements zero-allocation priority degradation to prevent outage cascades caused by cross-boundary catalog expansion.
+Cloudflame is a high-throughput edge bot mitigation and traffic classification proxy written in Rust, paired with an analytical feature extraction pipeline. It models an authentic 200-feature security telemetry catalog and implements zero-allocation priority degradation to prevent outage cascades caused by cross-boundary catalog expansion.
 
 ## Architecture Overview
 
@@ -9,7 +9,7 @@ Dirichlet is a high-throughput edge bot mitigation and traffic classification pr
          │
          ▼
  ┌────────────────────────────────────────────────────────┐
- │ dirichlet-proxy (Rust Edge Service)                    │
+ │ cloudflame-proxy (Rust Edge Service)                    │
  │                                                        │
  │ 1. Ingestion Engine                                    │
  │    - Fixed stack capacity: [Feature; 200]              │
@@ -72,18 +72,18 @@ matches across shard databases (`bot_signals_shard_01.events_r0`, `bot_signals_s
 In naive edge proxies, converting this 280-item slice into a fixed `[Feature; 200]` buffer via `try_into().unwrap()` triggers a panic (`TryFromSliceError`), causing an immediate 502 Bad Gateway outage cascade.
 
 ### Zero-Allocation Priority Degradation
-Dirichlet enforces a strict zero-allocation degradation policy:
+Cloudflame enforces a strict zero-allocation degradation policy:
 - **Hard Upper Bound**: `MAX_ACTIVE_FEATURES = 200`
 - **In-Place Partitioning**: When input cardinality exceeds 200, `select_nth_unstable_by` partitions the slice in `O(N)` time with zero heap memory allocations.
 - **Priority Eviction**: The 80 untrusted shadow columns (priority = 0) are shed first. All 200 canonical security features (priorities 50..255) remain intact.
 - **Structured RFC-5424 Telemetry**: Emits standard warning diagnostics:
   ```
-  <132>1 2026-09-23T16:18:00.000Z edge-colo-01 dirichlet-proxy 4102 SEC_OVERFLOW [feature_overflow@dirichlet dropped="80" limit="200" total="280"] High-cardinality feature payload degraded: low-priority features shed
+  <132>1 2026-09-23T16:18:00.000Z edge-colo-01 cloudflame-proxy 4102 SEC_OVERFLOW [feature_overflow@cloudflame dropped="80" limit="200" total="280"] High-cardinality feature payload degraded: low-priority features shed
   ```
 
 ## Verification & Conformance
 
-Dirichlet supports **Dual-Mode** execution:
+Cloudflame supports **Dual-Mode** execution:
 1. **Deterministic Offline Mode (Default)**: Runs instant verification against embedded catalog fixtures without requiring background database daemons.
 2. **Live ClickHouse Cluster Mode**: Queries a live ClickHouse instance via HTTP port 8123 to verify real `system.columns` reflection across physical shard replica tables (`events_r0`, `events_r1`).
 
@@ -118,14 +118,14 @@ python scripts/run_conformance.py --live-clickhouse
 When connected to live ClickHouse, `catalog_sync.py` automatically initializes `bot_signals.events` (200 canonical columns) and physical shard replicas (`events_r0`, `events_r1`). An unqualified reflection query (`WHERE table LIKE 'events%'`) queries ClickHouse's virtual `system.columns` engine directly, returning 280 rows to reproduce the real-world catalog expansion defect.
 
 ### Test Suite Execution
-- **Property-Based Conformance**: 10,000 randomized `proptest` cases in `crates/dirichlet-proxy/tests/schema_conformance.rs` asserting cardinality boundaries, priority multiset correctness, non-corruption, and RFC-5424 telemetry compliance.
+- **Property-Based Conformance**: 10,000 randomized `proptest` cases in `crates/cloudflame-proxy/tests/schema_conformance.rs` asserting cardinality boundaries, priority multiset correctness, non-corruption, and RFC-5424 telemetry compliance.
 - **Massive Stress Ingestion Gate**: Ingests 100,000 mixed features in under 20ms, dropping 99,800 low-priority items while retaining core security heuristics with 0 bytes heap reallocation.
 - **Python Feature Pipeline Tests**: Unit tests in `services/feature-pipeline/tests/test_pipeline.py`.
 - **Criterion Micro-Benchmarks**: Validates sub-20ns in-place selection execution (`7.66 ns`) against heap allocation overhead.
 
 ```bash
 # Run Rust tests
-cd crates/dirichlet-proxy
+cd crates/cloudflame-proxy
 cargo test
 
 # Run Rust benchmarks

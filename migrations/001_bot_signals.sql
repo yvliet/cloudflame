@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Migration: 001_bot_signals.sql
--- Service: Dirichlet Edge Security Analytics & Bot Mitigation
+-- Service: Cloudflame Edge Security Analytics & Bot Mitigation
 -- Description: Canonical schema declaring all 200 production telemetry signals
 --              spanning 6 core edge security domains.
 -- ============================================================================

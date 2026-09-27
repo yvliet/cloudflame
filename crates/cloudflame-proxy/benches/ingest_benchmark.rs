@@ -1,4 +1,4 @@
-//! Dirichlet Micro-Benchmark Suite
+//! Cloudflame Micro-Benchmark Suite
 //!
 //! Evaluates in-place zero-allocation partial selection (`select_nth_unstable_by`)
 //! against heap-allocated `Vec` management.
@@ -6,7 +6,7 @@
 use std::time::Duration;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use dirichlet_proxy::MAX_ACTIVE_FEATURES;
+use cloudflame_proxy::MAX_ACTIVE_FEATURES;
 
 /// Cache-resident compact feature descriptor (8 bytes) for high-throughput edge evaluation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

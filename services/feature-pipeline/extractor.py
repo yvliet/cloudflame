@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Dirichlet Feature Pipeline: Extractor Service.
+Cloudflame Feature Pipeline: Extractor Service.
 Maps ClickHouse catalog column metadata to verified 200-feature security descriptors
 with strict priority tier assignments, emitting payloads/features.json.
 
@@ -99,7 +99,7 @@ def extract_and_emit(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Dirichlet Feature Pipeline Extractor")
+    parser = argparse.ArgumentParser(description="Cloudflame Feature Pipeline Extractor")
     parser.add_argument(
         "--simulate-duplication",
         action="store_true",
@@ -138,7 +138,7 @@ def main() -> None:
         clickhouse_url=args.clickhouse_url,
     )
     mode_str = "DUPLICATED (280 features, 80 shadow)" if simulate else "CLEAN (200 features)"
-    sys.stderr.write(f"[dirichlet-extractor] Emitted {len(features)} features [{mode_str}]\n")
+    sys.stderr.write(f"[cloudflame-extractor] Emitted {len(features)} features [{mode_str}]\n")
 
 
 if __name__ == "__main__":

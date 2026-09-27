@@ -1,5 +1,5 @@
 /**
- * Dirichlet Edge Security Service: System Status Controller
+ * Cloudflame Edge Security Service: System Status Controller (formerly Dirichlet)
  */
 
 // Application State
@@ -1273,7 +1273,7 @@ const TAB_TITLES = {
 };
 
 function updateDocumentTitle(pageName) {
-  document.title = pageName ? `${pageName} | Dirichlet` : "Dirichlet";
+  document.title = pageName ? `${pageName} | Cloudflame` : "Cloudflame";
 }
 
 let previousTabBeforeIncident = "overview";

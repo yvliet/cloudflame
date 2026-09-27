@@ -1,5 +1,5 @@
 # ==============================================================================
-# Dirichlet Edge Security Proxy Configuration
+# Cloudflame Edge Security Proxy Configuration
 # ==============================================================================
 
 server:
@@ -20,7 +20,7 @@ evaluator:
   behavioral_entropy_weight: 0.25
 
 telemetry:
-  rfc5424_app_name: "dirichlet-proxy"
+  rfc5424_app_name: "cloudflame-proxy"
   rfc5424_facility: 16
   prometheus_metrics_enabled: true
   prometheus_endpoint: "/metrics"

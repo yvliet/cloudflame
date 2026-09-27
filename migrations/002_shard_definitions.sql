@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Migration: 002_shard_definitions.sql
--- Service: Dirichlet Edge Security Analytics & Shard Replication
+-- Service: Cloudflame Edge Security Analytics & Shard Replication
 -- Description: Declares cluster shard replica tables (events_r0, events_r1)
 --              illustrating cross-boundary schema duplication during metadata
 --              reflection when database predicates are omitted.
