@@ -1,0 +1,3 @@
+[sqlfluff]
+dialect = clickhouse
+exclude_rules = layout,capitalisation,references.keywords

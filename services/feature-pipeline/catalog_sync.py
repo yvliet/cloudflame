@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 # Canonical 200 columns across 6 security domains
-CANONICAL_FEATURES_200: List[Dict[str, str]] = [
+CANONICAL_FEATURES_200: List[Dict[str, Any]] = [
     # Domain 1: TLS & Cryptographic Layer (35 features)
     {"name": "tls_ja4_digest", "type": "FixedString(36)", "domain": "tls_cryptographic", "priority": 255},
     {"name": "tls_ja3_hash", "type": "FixedString(32)", "domain": "tls_cryptographic", "priority": 254},
@@ -406,7 +406,7 @@ def sync_catalog(
             )
 
     # Deterministic offline mode
-    records: List[Dict[str, Any]] = []
+    records = []
     for col in CANONICAL_FEATURES_200:
         records.append({
             "database": "bot_signals",
