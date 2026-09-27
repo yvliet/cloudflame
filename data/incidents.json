@@ -1,5 +1,29 @@
 [
   {
+    "id": "inc-2026-09-24-drift",
+    "title": "L7 Edge Proxy Ingestion Panic (TryFromSliceError)",
+    "service": "svc-fl2",
+    "service_group": "group-proxy",
+    "severity": "critical",
+    "status": "investigating",
+    "impact": "100% 502 Bad Gateway across edge PoPs",
+    "root_cause": "system.columns multi-shard reflection expanded dynamic catalog to 280 features",
+    "started_at": "2026-09-27T13:47:14.699113+00:00",
+    "resolved_at": null,
+    "updates": [
+      {
+        "time": "Just now",
+        "status": "investigating",
+        "message": "Critical panic detected: L7 Edge Proxy Ingestion Panic (TryFromSliceError). Edge proxy non-responsive."
+      },
+      {
+        "time": "Just now",
+        "status": "identified",
+        "message": "Identified cross-boundary schema drift: system.columns multi-shard reflection expanded dynamic catalog to 280 features."
+      }
+    ]
+  },
+  {
     "id": "inc-2026-09-24-bgp",
     "title": "BGP Route Reflection Latency on Bring Your Own IP (BYOIP) Prefix Updates",
     "service": "svc-ip",
