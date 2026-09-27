@@ -27,11 +27,8 @@
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
   
-  <!-- Brand Custom Font Preload -->
-  <link rel="preload" href="fonts/Technotot.otf" as="font" type="font/otf" crossorigin>
-
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=9">
+  <link rel="stylesheet" href="styles.css?v=10">
   
   <!-- Leaflet Map Assets -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -45,9 +42,7 @@
       <div class="header-brand-group">
         <!-- Left: Brand Wordmark -->
         <a href="#" class="brand-link" onclick="switchTab('overview'); return false;">
-          <svg class="brand-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <polygon points="12,4 21,19 3,19" />
-          </svg>
+          <img src="logo.png" alt="Cloudflame" class="brand-logo">
           <span class="brand-text">cloudflame</span>
         </a>
       </div>
@@ -96,7 +91,7 @@
     <div id="view-overview" class="tab-view active">
       <!-- Page Hero Header -->
       <div class="page-hero">
-        <h1 class="page-title"><span class="font-brand">cloudflame</span> System Status</h1>
+        <h1 class="page-title">Cloudflame System Status</h1>
         <button type="button" class="btn-subscribe" onclick="alert('Subscribed to Cloudflame incident notifications.')">
           Subscribe to updates
         </button>
@@ -460,11 +455,11 @@
       <div class="incident-timestamps-bar">
         <div class="timestamp-col">
           <span class="timestamp-label">Started</span>
-          <span class="timestamp-value" id="incident-detail-started">—</span>
+          <span class="timestamp-value" id="incident-detail-started">-</span>
         </div>
         <div class="timestamp-col" id="incident-resolved-col">
           <span class="timestamp-label">Resolved</span>
-          <span class="timestamp-value" id="incident-detail-resolved">—</span>
+          <span class="timestamp-value" id="incident-detail-resolved">-</span>
         </div>
       </div>
 

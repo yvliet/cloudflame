@@ -1964,7 +1964,7 @@ const SERVICE_NAME_LOOKUP = {
 };
 
 function formatTimestampForTimezone(isoString) {
-  if (!isoString) return "—";
+  if (!isoString) return "-";
   try {
     const d = new Date(isoString);
     if (isNaN(d.getTime())) return isoString;
